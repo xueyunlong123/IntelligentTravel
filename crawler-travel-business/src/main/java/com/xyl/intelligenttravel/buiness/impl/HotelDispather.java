@@ -3,8 +3,7 @@ package com.xyl.intelligenttravel.buiness.impl;
 import com.xyl.common.enums.CrawlerTypeEnum;
 import com.xyl.intelligenttravel.buiness.Dispatcher;
 import com.xyl.intelligenttravel.pipeline.HotelInfoMongoPipeline;
-import com.xyl.intelligenttravel.pipeline.MongoPipeline;
-import com.xyl.intelligenttravel.pipeline.RedisPipeline;
+import com.xyl.intelligenttravel.pipeline.RedisMapPipeline;
 import com.xyl.intelligenttravel.processor.HotelProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ public class HotelDispather implements Dispatcher {
     HotelInfoMongoPipeline hotelInfoMongoPipeline;
 
     @Autowired
-    RedisPipeline redisPipeline;
+    RedisMapPipeline redisMapPipeline;
     /**
      * dispatch your buseiness with t
      */
@@ -44,7 +43,7 @@ public class HotelDispather implements Dispatcher {
                                     .method(HttpConstant.Method.GET)
                                     .build())
                     .addPipeline(hotelInfoMongoPipeline)
-                    .addPipeline(redisPipeline)
+                    .addPipeline(redisMapPipeline)
                     .run();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

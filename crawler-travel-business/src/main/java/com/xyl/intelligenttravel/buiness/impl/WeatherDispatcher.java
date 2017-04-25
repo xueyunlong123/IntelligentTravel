@@ -3,20 +3,16 @@ package com.xyl.intelligenttravel.buiness.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.xyl.common.enums.CrawlerTypeEnum;
 import com.xyl.intelligenttravel.buiness.Dispatcher;
-import com.xyl.intelligenttravel.pipeline.HotelInfoMongoPipeline;
-import com.xyl.intelligenttravel.pipeline.MongoPipeline;
-import com.xyl.intelligenttravel.pipeline.RedisPipeline;
+import com.xyl.intelligenttravel.pipeline.RedisMapPipeline;
 import com.xyl.intelligenttravel.pipeline.WeatherInfoMongoPipeline;
 import com.xyl.intelligenttravel.processor.WeatherPageProcesoor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import webmagic.Request;
 import webmagic.Spider;
-import webmagic.pipeline.ConsolePipeline;
 import webmagic.utils.HttpConstant;
 import java.io.IOException;
 
@@ -29,7 +25,8 @@ public class WeatherDispatcher implements Dispatcher {
 
     @Autowired
     WeatherInfoMongoPipeline mongoPipeline;
-    @Autowired RedisPipeline redisPipeline;
+    @Autowired
+    RedisMapPipeline redisMapPipeline;
 
 
     /**
@@ -57,7 +54,7 @@ public class WeatherDispatcher implements Dispatcher {
         Spider
                 .create(new WeatherPageProcesoor())
                 .addPipeline(mongoPipeline)
-                .addPipeline(redisPipeline)
+                .addPipeline(redisMapPipeline)
                 .addRequest(request)
                 .run();
         log.info("天气处理完成");

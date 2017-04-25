@@ -10,7 +10,8 @@ import lombok.Getter;
 public enum CrawlerTypeEnum implements BaseIntEnum {
 
     WEATHER_CRAWLER(1,"天气信息"),
-    HOTEL_CRAWLER(2,"酒店信息")
+    HOTEL_CRAWLER(2,"酒店信息"),
+    TRAVEL_AGENTCY_CRAWLER(3,"旅行社信息"),
 
 
     ;

@@ -1,8 +1,12 @@
 package com.xyl.intelligenttravel.pipeline;
 
+import com.xyl.intelligenttravel.dao.HotelRepository;
+import com.xyl.intelligenttravel.dao.TravelAgencyRepository;
+import com.xyl.intelligenttravel.model.HotelInfo;
+import com.xyl.intelligenttravel.model.TravelAgencyInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 import webmagic.ResultItems;
@@ -10,16 +14,17 @@ import webmagic.Task;
 import webmagic.pipeline.Pipeline;
 
 /**
- * redis pipeline
+ *
  * Created by xueyunlong on 17-4-19.
  */
 @Service@Slf4j
-public class RedisPipeline implements Pipeline {
-
+public class TravelAgencyInfoMongoPipeline implements Pipeline {
 
     @Autowired
-    private RedissonClient redissonClient;
+    MongoTemplate mongoTemplate;
 
+    @Autowired
+    TravelAgencyRepository  travelAgencyRepository;
     /**
      * Process extracted results.
      *
@@ -31,12 +36,12 @@ public class RedisPipeline implements Pipeline {
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        log.info("begin cache into redis : {}",resultItems.getResults());
+        log.info("begin save into mongo : {}",resultItems.getResults());
         resultItems.getResults().forEach(crawlerResult -> {
-            redissonClient.getMapCache(resultItems.getRequest().getBaseIntEnum().toString()).fastPut(resultItems.getRequest().getKey(),crawlerResult);
+            travelAgencyRepository.save((TravelAgencyInfo) crawlerResult);
         });
         stopWatch.stop();
-        log.info("end cache into redis ,costTime = {}",stopWatch.getTotalTimeSeconds());
+        log.info("end save into mongo ,costTime = {}",stopWatch.getTotalTimeSeconds());
     }
 
 }

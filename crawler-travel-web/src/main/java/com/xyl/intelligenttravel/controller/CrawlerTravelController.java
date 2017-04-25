@@ -1,17 +1,17 @@
 package com.xyl.intelligenttravel.controller;
 
-import com.alpha.common.exception.BaseException;
-import com.xyl.common.enums.BasicErrorCodeEnum;
+import com.alibaba.fastjson.JSONObject;
+import com.alpha.common.utils.JacksonUtil;
 import com.xyl.common.enums.CrawlerTypeEnum;
 import com.xyl.common.web.fastjson.FastJson;
 import com.xyl.common.web.result.JSONResult;
 import com.xyl.common.web.result.Result;
 import com.xyl.intelligenttravel.buiness.impl.HotelDispather;
 import com.xyl.intelligenttravel.buiness.impl.ScenicDispatcher;
+import com.xyl.intelligenttravel.buiness.impl.TravelAgencyDispather;
 import com.xyl.intelligenttravel.buiness.impl.WeatherDispatcher;
 import com.xyl.intelligenttravel.dto.CrawlerRequestDTO;
 import com.xyl.intelligenttravel.service.CrawlerTravelService;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import webmagic.CrawlerResult;
 
-import java.util.concurrent.*;
+import java.util.List;
 
 /**
  * 旅游信息爬虫controller
@@ -39,6 +39,7 @@ public class CrawlerTravelController {
 
     @Autowired private WeatherDispatcher weatherDispatcher;
     @Autowired private HotelDispather hotelDispather;
+    @Autowired private TravelAgencyDispather travelAgencyDispather;
     @Autowired
     private
     CrawlerTravelService crawlerTravelService;
@@ -48,7 +49,8 @@ public class CrawlerTravelController {
 
     /**
      * 健康检测
-     * @return
+     * @return string
+     *
      */
     @RequestMapping(value = "/health",method = RequestMethod.GET)
     public String home(){
@@ -110,6 +112,19 @@ public class CrawlerTravelController {
         hotelDispather.dispatch(crawlerRequestDTO.getAddress());
         CrawlerResult crawlerResult = (CrawlerResult) redissonClient.getMapCache(CrawlerTypeEnum.HOTEL_CRAWLER.toString()).get(crawlerRequestDTO.getAddress());
         return JSONResult.ok(crawlerResult);
+    }
+    /*
+    * 爬虫同步请求旅行社信息
+    * */
+
+    @RequestMapping(value = "/sync_crawler/travel_agency_info", method = RequestMethod.GET)
+    @ApiOperation(value = "爬虫同步请求旅行社信息",notes = "",code = 200 ,produces = "application/json")
+    public Result syncTravelAgencyInfoCrawler(){
+        travelAgencyDispather.dispatch();
+        List<CrawlerResult> crawlerResults = redissonClient.getList(CrawlerTypeEnum.TRAVEL_AGENTCY_CRAWLER.toString());
+        JSONObject data = JacksonUtil.objToJSONObject(crawlerResults.get(0));
+        crawlerResults.clear();
+        return JSONResult.ok(data);
     }
     /**
      * 爬虫异步请求

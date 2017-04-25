@@ -2,6 +2,7 @@ package com.xyl.intelligenttravel;
 
 import com.xyl.intelligenttravel.buiness.impl.HotelDispather;
 import com.xyl.intelligenttravel.buiness.impl.ScenicDispatcher;
+import com.xyl.intelligenttravel.buiness.impl.TravelAgencyDispather;
 import com.xyl.intelligenttravel.buiness.impl.WeatherDispatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -18,6 +19,8 @@ public class Application implements CommandLineRunner{
 	WeatherDispatcher weatherDispatcher;
 	@Autowired
 	HotelDispather hotelDispather;
+	@Autowired
+	TravelAgencyDispather travelAgencyDispather;
 
 	public static void main(String[] args) {
 		SpringApplication springApplication = new SpringApplication();
@@ -29,6 +32,8 @@ public class Application implements CommandLineRunner{
 	public void run(String... strings) throws Exception {
 		System.out.println("启动");
 //		weatherDispatcher.dispatch("北京");
-		hotelDispather.dispatch("北京");
+//		hotelDispather.dispatch("北京");
+		travelAgencyDispather.dispatch();
 	}
+
 }
