@@ -31,9 +31,9 @@ public class Application implements CommandLineRunner{
 	@Override
 	public void run(String... strings) throws Exception {
 		System.out.println("启动");
-//		weatherDispatcher.dispatch("北京");
+		weatherDispatcher.dispatch("北京");
 //		hotelDispather.dispatch("北京");
-		travelAgencyDispather.dispatch();
+//		travelAgencyDispather.dispatch();
 	}
 
 }
